@@ -31,13 +31,6 @@ if __name__ == "__main__":
         operands = tuple(int(x) for x in line.split(":")[1].strip().split(" "))
         equations.append((result, operands))
 
-    # _sum = 0
-    # for equation in track(equations, total=len(equations)):
-    #     solution_count = solve_equation(*equation)
-    #     if solution_count:
-    #         _sum += equation[0]
-    # print(_sum)
-
     with ProcessPoolExecutor() as e:
         futures = []
         for equation in equations:
