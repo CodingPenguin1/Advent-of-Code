@@ -1,6 +1,7 @@
+import numpy as np
+
 GRID_WIDTH = 101
 GRID_HEIGHT = 103
-
 
 
 class Robot:
@@ -29,59 +30,39 @@ class Robot:
 
 
 def print_grid(robots: list[Robot]):
-    for r in range(GRID_HEIGHT):
-        if -1 < ((GRID_HEIGHT + 1) / 2) - r < 2:
-            print()
-        for c in range(GRID_WIDTH):
+    for r in range(GRID_HEIGHT // 3, (2 * GRID_HEIGHT) // 3):
+        for c in range(GRID_WIDTH // 4, (3 * GRID_WIDTH) // 4):
             robot_count = 0
             for robot in robots:
                 if robot.r == r and robot.c == c:
                     robot_count += 1
 
-            if abs(GRID_WIDTH // 2 - c) == 0:
-                print(" ", end="")
             if robot_count:
-                print(robot_count, end="")
+                print("X", end="")
             else:
                 print(".", end="")
-            if abs(GRID_WIDTH // 2 - c) == 0:
-                print(" ", end="")
         print()
 
 
-def get_safety_factor(robots: list[Robot]) -> int:
-    v_mid = GRID_HEIGHT//2 if GRID_HEIGHT%2==0 else (GRID_HEIGHT)//2
-    h_mid = GRID_WIDTH//2 if GRID_WIDTH%2==0 else (GRID_WIDTH)//2
+def check_christmas_tree(robots: list[Robot]) -> bool:
+    grid = np.zeros((GRID_HEIGHT, GRID_WIDTH), dtype=np.uint8)
+    for robot in robots:
+        grid[robot.r][robot.c] = 1
 
-
-    q1, q2, q3, q4 = 0, 0, 0, 0
-    for r in range(GRID_HEIGHT):
-        for c in range(GRID_WIDTH):
-            if r == v_mid or c == h_mid:
-                continue
-
-            robot_count = 0
-            for robot in robots:
-                if robot.r == r and robot.c == c:
-                    robot_count += 1
-
-            if r < v_mid:
-                if c < h_mid:
-                    q1 += robot_count
-                elif c > h_mid:
-                    q2 += robot_count
-            elif r > v_mid:
-                if c < h_mid:
-                    q3 += robot_count
-                elif c > h_mid:
-                    q4 += robot_count
-
-    return q1 * q2 * q3 * q4
+    for robot in robots:
+        found_10_vertical = True
+        for c in range(robot.c, robot.c + 10):
+            if c >= GRID_WIDTH or grid[robot.r][c] == 0:
+                found_10_vertical = False
+                break
+        if found_10_vertical:
+            return True
+    return False
 
 
 if __name__ == "__main__":
-    input_file = 'input.txt'
-    if input_file.startswith('sample'):
+    input_file = "input.txt"
+    if input_file.startswith("sample"):
         GRID_WIDTH = 11
         GRID_HEIGHT = 7
 
@@ -96,22 +77,10 @@ if __name__ == "__main__":
         c_v, r_v = [int(x) for x in velocity.split(",")]
         robots.append(Robot(r, c, r_v, c_v))
 
-    # robots = [Robot(4, 2, -3, 2)]
-    # print_grid(robots)
-    # print("\n")
-    # for _ in range(5):
-    #     robots[0].move()
-    #     print_grid(robots)
-    #     print()
-
-    SECONDS = 100
-    for i in range(SECONDS):
+    for i in range(1_000_000):
         for robot in robots:
             robot.move()
-        print_grid(robots)
-        input(i)
-
-
-    print_grid(robots)
-    safety_factor = get_safety_factor(robots)
-    print(safety_factor)
+        if check_christmas_tree(robots):
+            print_grid(robots)
+            print(i + 1)
+            exit()

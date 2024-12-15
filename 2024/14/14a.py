@@ -96,14 +96,6 @@ if __name__ == "__main__":
         c_v, r_v = [int(x) for x in velocity.split(",")]
         robots.append(Robot(r, c, r_v, c_v))
 
-    # robots = [Robot(4, 2, -3, 2)]
-    # print_grid(robots)
-    # print("\n")
-    # for _ in range(5):
-    #     robots[0].move()
-    #     print_grid(robots)
-    #     print()
-
     SECONDS = 100
     for _ in range(SECONDS):
         for robot in robots:
