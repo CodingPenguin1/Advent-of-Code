@@ -105,9 +105,13 @@ if __name__ == "__main__":
     #     print()
 
     SECONDS = 100
-    for _ in range(SECONDS):
+    for i in range(SECONDS):
         for robot in robots:
             robot.move()
+        print_grid(robots)
+        input(i)
 
-    print(get_safety_factor(robots))
 
+    print_grid(robots)
+    safety_factor = get_safety_factor(robots)
+    print(safety_factor)
